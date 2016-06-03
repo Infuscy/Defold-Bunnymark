@@ -1,0 +1,4 @@
+tile_set: "/assets/atlas/bunny.atlas"
+default_animation: "wabbit_alpha"
+material: "/builtins/materials/sprite.material"
+blend_mode: BLEND_MODE_ALPHA

@@ -1,0 +1,33 @@
+[project]
+title = My project
+version = 0.1
+
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[input]
+game_binding = /input/game.input_bindingc
+
+[display]
+width = 960
+height = 640
+variable_dt = 1
+
+[physics]
+scale = 0.02
+
+[script]
+shared_state = 1
+
+[sprite]
+max_count = 4096
+
+[resource]
+max_resources = 4096
+
+[factory]
+max_count = 4096
+
+[collection]
+max_instances = 4096
+

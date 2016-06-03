@@ -1,0 +1,28 @@
+local count_hash = hash("count")
+
+function init(self)
+    -- Add initialization code here
+    -- Remove this function if not needed
+    self.fpsNode = gui.get_node("fps")
+    self.counterNode = gui.get_node("counter")
+    self.averageFps = 60
+end
+
+function update(self, dt)
+    -- Add update code here
+    -- Remove this function if not needed
+    local msec = dt * 1000
+    msec = math.floor(msec)
+    local fps = 1 / dt
+    fps = math.floor(fps)
+    gui.set_text(self.fpsNode, msec.." ms "..fps.." fps ")
+end
+
+function on_message(self, message_id, message, sender)
+    -- Add message-handling code here
+    -- Remove this function if not needed
+    if message_id == count_hash then
+    	gui.set_text(self.counterNode, "Bunny Count:"..message.count)
+    end
+end
+
