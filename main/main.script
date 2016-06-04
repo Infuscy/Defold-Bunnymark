@@ -56,7 +56,7 @@ local function more100Bunny(self)
 		go.set_position(vmath.vector3(posX, posY, 1), bunnyObj.id)
 		bunnyObj.vx = math.random(5, 40) - 20 
 		bunnyObj.vy = math.random(5, 40) - 20 
-		table.insert(self.allOfBunnyObjects, bunnyObj)
+		self.allOfBunnyObjects[#self.allOfBunnyObjects + 1] = bunnyObj
 	end
 end
 
