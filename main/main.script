@@ -31,8 +31,8 @@ end
 function update(self, dt)
     -- Add update code here
     -- Remove this function if not needed
-    for i,v in ipairs(self.allOfBunnyObjects) do
-    	local nBunny = v
+    for i=1,#self.allOfBunnyObjects do
+    	local nBunny = self.allOfBunnyObjects[i]
     	local pos = go.get_position(nBunny.id)
     	local n_posX = pos.x + nBunny.vx
     	local n_posY = pos.y + nBunny.vy
