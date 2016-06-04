@@ -46,11 +46,6 @@ function update(self, dt)
     end
 end
 
-function on_message(self, message_id, message, sender)
-    -- Add message-handling code here
-    -- Remove this function if not needed
-end
-
 local function more100Bunny(self)
 	for i=1,100 do
 		local bunnyGo = factory.create("go#factory")
