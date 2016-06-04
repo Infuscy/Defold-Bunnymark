@@ -1,11 +1,19 @@
 local click_hash = hash("click")
+local c = 0
+local WIDTH = tonumber(sys.get_config("display.width"))
+local HEIGHT = tonumber(sys.get_config("display.height"))
+
+local allOfBunnyObjects = {}
+set_position = go.set_position
+local minX = 0
+local minY = 0
+local maxX = 0
+local maxY = 0
 
 function init(self)
     -- Add initialization code here
     -- Remove this function if not needed
-    -- Bunny object table
-    self.allOfBunnyObjects = {}
-    
+    -- Bunny object table    
     local bunnyGo = factory.create("go#factory")
 
 	local spriteUrl = msg.url("main", bunnyGo, "sprite")
@@ -13,13 +21,16 @@ function init(self)
     local bunnySize = go.get(spriteUrl, "size")
 	local width = tonumber(sys.get_config("display.width"))
 	local height = tonumber(sys.get_config("display.height"))
-    self.minX = bunnySize.x
-    self.minY = bunnySize.y
-    self.maxX = width  - bunnySize.x
-    self.maxY = height - bunnySize.y
+    minX = bunnySize.x
+    minY = bunnySize.y
+    maxX = width  - bunnySize.x
+    maxY = height - bunnySize.y
     
     msg.post(".", "acquire_input_focus")
     --msg.post("@system:", "toggle_profile")
+    
+    self.frame_count = 0
+	self.fps_start = socket.gettime()
 end
 
 function final(self)
@@ -31,19 +42,23 @@ end
 function update(self, dt)
     -- Add update code here
     -- Remove this function if not needed
-    for i=1,#self.allOfBunnyObjects do
-    	local nBunny = self.allOfBunnyObjects[i]
-    	local pos = go.get_position(nBunny.id)
-    	local n_posX = pos.x + nBunny.vx
-    	local n_posY = pos.y + nBunny.vy
-    	if n_posX < self.minX or n_posX>self.maxX then
+    for i=1,c do
+    	local nBunny = allOfBunnyObjects[i]
+    	nBunny.pos.x = nBunny.pos.x + nBunny.vx
+        nBunny.pos.y = nBunny.pos.y + nBunny.vy
+    	if nBunny.pos.x < minX or nBunny.pos.x>maxX then
 			nBunny.vx = -nBunny.vx;
 	    end
-        if n_posY<self.minY or n_posY>self.maxY then
+        if nBunny.pos.y<minY or nBunny.pos.y>maxY then
             nBunny.vy = -nBunny.vy;
         end
-        go.set_position(vmath.vector3(pos.x + nBunny.vx, pos.y + nBunny.vy, pos.z), nBunny.id)
+        
+        set_position(nBunny.pos, nBunny.id)
     end
+    
+    self.frame_count = self.frame_count + 1
+	local fps = self.frame_count / (socket.gettime() - self.fps_start)
+	msg.post("@render:", "draw_text", { text = ("Bunnies: %d FPS: %d"):format(c, fps), position = vmath.vector3(10, HEIGHT - 60, 0) } )
 end
 
 local function more100Bunny(self)
@@ -51,12 +66,11 @@ local function more100Bunny(self)
 		local bunnyGo = factory.create("go#factory")
 		local bunnyObj = {}
 		bunnyObj.id = bunnyGo
-		local posX = math.random(self.minX, self.maxX)
-		local posY = math.random(self.minY, self.maxY)
-		go.set_position(vmath.vector3(posX, posY, 1), bunnyObj.id)
+		bunnyObj.pos = vmath.vector3(math.random(minX, maxX), math.random(minY, maxY), 1)
 		bunnyObj.vx = math.random(5, 40) - 20 
 		bunnyObj.vy = math.random(5, 40) - 20 
-		self.allOfBunnyObjects[#self.allOfBunnyObjects + 1] = bunnyObj
+		c = c + 1
+		allOfBunnyObjects[c] = bunnyObj
 	end
 end
 
@@ -65,6 +79,8 @@ function on_input(self, action_id, action)
     -- Remove this function if not needed
     if action_id == click_hash and action.pressed then
     	more100Bunny(self)
-    	msg.post("#gui", "count", {count=#self.allOfBunnyObjects})
+    	self.frame_count = 0
+		self.fps_start = socket.gettime()
+    	--msg.post("#gui", "count", {count=#self.allOfBunnyObjects})
     end
 end
